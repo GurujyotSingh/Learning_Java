@@ -21,7 +21,7 @@ class TransactionSystem{
 		else {
 			System.out.println("Enter Right Value");
 		}
-		System.out.println("Transaction Successfull");
+		System.out.println("Transaction Successfull                                                                                          x");
 		System.out.println("Your Updated Balance : "+initial_bal);
 	}
 }

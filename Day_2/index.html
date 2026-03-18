@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .btn-action {
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .response-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .input-group-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .header-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="main-card p-4 p-md-5">
+                    
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <i class="bi bi-hdd-rack header-icon"></i>
+                        <h2 class="fw-bold mt-2">API Testing Interface</h2>
+                        <p class="text-muted">Test your Flask Student API endpoints</p>
+                    </div>
+
+                    <!-- API URL Config -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-link-45deg"></i> API Base URL
+                        </label>
+                        <input type="text" id="apiUrl" class="form-control form-control-lg" 
+                               value="http://127.0.0.1:5000/students" placeholder="Enter API URL">
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Input Fields -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-hash"></i> Student ID
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <input type="number" id="studentId" class="form-control" placeholder="Enter ID">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-person"></i> Student Name
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                <input type="text" id="studentName" class="form-control" placeholder="Enter Name">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-book"></i> Course
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-journal-code"></i></span>
+                                <input type="text" id="courseName" class="form-control" placeholder="Enter Course">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-6 col-md-4 col-lg">
+                            <button class="btn btn-info btn-action w-100 text-white" onclick="getStudents()">
+                                <i class="bi bi-list-ul"></i> GET All
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <button class="btn btn-primary btn-action w-100" onclick="getStudent()">
+                                <i class="bi bi-search"></i> GET By ID
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg">
+                            <button class="btn btn-success btn-action w-100" onclick="addStudent()">
+                                <i class="bi bi-plus-circle"></i> POST Add
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-6 col-lg">
+                            <button class="btn btn-warning btn-action w-100" onclick="updateStudent()">
+                                <i class="bi bi-pencil-square"></i> PUT Update
+                            </button>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg">
+                            <button class="btn btn-danger btn-action w-100" onclick="deleteStudent()">
+                                <i class="bi bi-trash"></i> DELETE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Response Section -->
+                    <div class="position-relative">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0 fw-bold">
+                                <i class="bi bi-terminal"></i> Response
+                                <span class="spinner-border spinner-border-sm text-primary loading" id="loader" role="status"></span>
+                            </h5>
+                            <div>
+                                <span class="badge bg-secondary me-2" id="statusBadge">Ready</span>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="clearResponse()">
+                                    <i class="bi bi-eraser"></i> Clear
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="copyResponse()">
+                                    <i class="bi bi-clipboard"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <pre id="response" class="response-box mb-0">// Response will appear here...</pre>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> Make sure your Flask API server is running
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function getApiUrl() {
+            return document.getElementById("apiUrl").value.trim();
+        }
+
+        function showLoading(show) {
+            document.getElementById("loader").classList.toggle("show", show);
+        }
+
+        function updateStatus(status, type) {
+            const badge = document.getElementById("statusBadge");
+            badge.textContent = status;
+            badge.className = `badge bg-${type} me-2`;
+        }
+
+        function formatJSON(text) {
+            try {
+                const json = JSON.parse(text);
+                return JSON.stringify(json, null, 2);
+            } catch (e) {
+                return text;
+            }
+        }
+
+        async function getStudents() {
+            showLoading(true);
+            updateStatus("Loading...", "warning");
+            try {
+                const response = await fetch(getApiUrl());
+                const text = await response.text();
+                document.getElementById("response").innerText = formatJSON(text);
+                updateStatus(`${response.status} OK`, "success");
+            } catch (error) {
+                document.getElementById("response").innerText = `Error: ${error.message}`;
+                updateStatus("Error", "danger");
+            }
+            showLoading(false);
+        }
+
+        async function getStudent() {
+            const id = document.getElementById("studentId").value;
+            if (!id) {
+                alert("Please enter Student ID");
+                return;
+            }
+            showLoading(true);
+            updateStatus("Loading...", "warning");
+            try {
+                const response = await fetch(`${getApiUrl()}/${id}`);
+                const text = await response.text();
+                document.getElementById("response").innerText = formatJSON(text);
+                updateStatus(`${response.status} ${response.ok ? 'OK' : 'Error'}`, response.ok ? "success" : "danger");
+            } catch (error) {
+                document.getElementById("response").innerText = `Error: ${error.message}`;
+                updateStatus("Error", "danger");
+            }
+            showLoading(false);
+        }
+
+        async function addStudent() {
+            const id = document.getElementById("studentId").value;
+            const name = document.getElementById("studentName").value;
+            const course = document.getElementById("courseName").value;
+
+            if (!id || !name || !course) {
+                alert("Please fill all fields (ID, Name, Course)");
+                return;
+            }
+
+            const student = {
+                id: parseInt(id),
+                name: name,
+                course: course
+            };
+
+            showLoading(true);
+            updateStatus("Sending...", "warning");
+            try {
+                const response = await fetch(getApiUrl(), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(student)
+                });
+                const text = await response.text();
+                document.getElementById("response").innerText = formatJSON(text);
+                updateStatus(`${response.status} Created`, response.ok ? "success" : "danger");
+            } catch (error) {
+                document.getElementById("response").innerText = `Error: ${error.message}`;
+                updateStatus("Error", "danger");
+            }
+            showLoading(false);
+        }
+
+        async function updateStudent() {
+            const id = document.getElementById("studentId").value;
+            const name = document.getElementById("studentName").value;
+            const course = document.getElementById("courseName").value;
+
+            if (!id) {
+                alert("Please enter Student ID to update");
+                return;
+            }
+
+            const student = {
+                name: name,
+                course: course
+            };
+
+            showLoading(true);
+            updateStatus("Updating...", "warning");
+            try {
+                const response = await fetch(`${getApiUrl()}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(student)
+                });
+                const text = await response.text();
+                document.getElementById("response").innerText = formatJSON(text);
+                updateStatus(`${response.status} Updated`, response.ok ? "success" : "danger");
+            } catch (error) {
+                document.getElementById("response").innerText = `Error: ${error.message}`;
+                updateStatus("Error", "danger");
+            }
+            showLoading(false);
+        }
+
+        async function deleteStudent() {
+            const id = document.getElementById("studentId").value;
+            if (!id) {
+                alert("Please enter Student ID to delete");
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete student with ID: ${id}?`)) {
+                return;
+            }
+
+            showLoading(true);
+            updateStatus("Deleting...", "warning");
+            try {
+                const response = await fetch(`${getApiUrl()}/${id}`, {
+                    method: "DELETE"
+                });
+                const text = await response.text();
+                document.getElementById("response").innerText = formatJSON(text);
+                updateStatus(`${response.status} Deleted`, response.ok ? "success" : "danger");
+            } catch (error) {
+                document.getElementById("response").innerText = `Error: ${error.message}`;
+                updateStatus("Error", "danger");
+            }
+            showLoading(false);
+        }
+
+        function clearResponse() {
+            document.getElementById("response").innerText = "// Response will appear here...";
+            updateStatus("Ready", "secondary");
+        }
+
+        function copyResponse() {
+            const text = document.getElementById("response").innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = originalHTML, 1500);
+            });
+        }
+    </script>
+
+</body>
+</html>

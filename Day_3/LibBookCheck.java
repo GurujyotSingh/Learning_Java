@@ -1,4 +1,4 @@
-import java.util.Scanner;
+                                                                                                                    import java.util.Scanner;
 class LibBookCheck{
 	public static void main(String args[]){
 		int book_copies[],total_books,index;
