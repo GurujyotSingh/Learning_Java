@@ -1,4 +1,4 @@
-class MathDemo{
+/*class MathDemo{
 	public static void main(String args[]){
 		if(args.length<3){
 			System.out.println("Input example, Eg: 1 + 2");
@@ -30,5 +30,38 @@ class MathDemo{
 				
 			}
 		}
+	}
+}*/
+import java.util.Scanner;
+class MathDemo{
+	public static void main(String args[]){
+		int n;
+
+		double price;
+		String prod_name;
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Enter number of items : ");
+		n = sc.nextInt();
+		double subtotal=0;
+		double disc;
+		double item[] = new double[n];
+		String prod[]= new String[n];
+		for(int i=0;i<n;i++){
+			prod_name = sc.next();
+			price = sc.nextDouble();
+			item[i] = price;
+			prod[i] = prod_name;
+			subtotal+=price;
+		}
+		if(subtotal > 1000){
+			System.out.println("Discount applied 10% on "+subtotal);
+		
+			disc = subtotal*0.10;
+			subtotal -= disc;
+		}
+		else{
+			System.out.println("No discount applied");
+		}
+		System.out.println("Sub total :"+subtotal);
 	}
 }

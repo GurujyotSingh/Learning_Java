@@ -15,6 +15,7 @@ class LinuxSystem{
 			System.out.print("Enter your command : ");
 			cmd = sc.nextLine();
 			start_parameter = cmd.split(" ");
+			start_parameter = start_parameter
 			if(start_parameter[0].equals("echo")){
 				System.out.println("Inside echo");
 				System.out.println(start_parameter[1]);
